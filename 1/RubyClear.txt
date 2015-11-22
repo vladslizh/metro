@@ -1,0 +1,276 @@
+
+def pieces():
+    
+    go_first = ask_yes_no()
+    if go_first == :
+        print()
+        human = X
+        computer = O
+    else:
+        print()
+        if go_first == :
+            print()
+        human = X
+        computer = X
+        human = O
+    return computer, human
+
+
+
+   
+
+X = 
+O = 
+EMPTY = 
+TIE = 
+NUM_SQUARES = 9
+
+                            
+                                
+
+def display_instruct():
+      
+    print(
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    )
+
+
+def ask_yes_no(question):
+    
+    response = None
+    while response not in (, ):
+        response = input(question).lower()
+    return response
+
+
+def ask_number(question, low, high):
+    
+    response = None
+    while response not in range(low, high):
+        response = int(input(question))
+    return response
+
+def pieces():
+    
+    go_first = ask_yes_no()
+    if go_first == :
+        print()
+        human = X
+        computer = O
+    else:
+        print()
+        computer = X
+        human = O
+    return computer, human
+
+
+def new_board():
+    
+    board = []
+    for square in range(NUM_SQUARES):
+        board.append(EMPTY)
+    return board
+
+
+def display_board():
+    
+    print(, board[0], , board[1], , board[2])
+    print(, )
+    print(, board[3], , board[4], , board[5])
+    print(, )
+    print(, board[6], , board[7], , board[8], )
+
+
+def legal_moves(board):
+    
+    moves = []
+    for square in range(NUM_SQUARES):
+        if board[square] == EMPTY:
+            moves.append(square)
+    return moves
+
+
+def winner(board):
+    
+    WAYS_TO_WIN = ((0, 1, 2),
+                   (3, 4, 5),
+                   (6, 7, 8),
+                   (0, 3, 6),
+                   (1, 4, 7),
+                   (2, 5, 8),
+                   (0, 4, 8),
+                   (2, 4, 6))
+    
+       
+                            
+                                
+                
+            return winner
+    
+    if EMPTY not in board:
+        return TIE
+    
+    return None
+
+
+def human_move(human):
+      
+    legal = legal_moves(board)
+    move = None
+    while move not in legal:
+        move = ask_number(, 0, NUM_SQUARES)
+        if move not in legal:
+            print()
+    print()
+    return move
+
+
+def computer_move(computer, human):
+    
+    
+    test_board = board[:]
+    
+    BEST_MOVES = (4, 0, 2, 6, 8, 1, 3, 5, 7)
+    
+    print(, end=)
+    
+    
+    for move in legal_moves(test_board):
+        test_board[move] = computer
+        if winner(test_board) == computer:
+            print(move)
+            return move
+        
+        test_board[move] = EMPTY
+    
+    
+    for move in legal_moves(test_board):
+        test_board[move] = human
+        if winner(test_board) == human:
+            print(move)
+            return move
+        
+        test_board[move] = EMPTY
+    
+    
+    for move in BEST_MOVES:
+        if move in legal_moves(test_board):
+            print(move)
+            return move
+
+
+def next_turn():
+    
+    if turn == X:
+        return O
+    else:
+        return X
+
+    
+def congrat_winner(the_winner, computer, human):
+    
+    if the_winner != TIE:
+        print(the_winner, )
+    else:
+        print()
+    
+    if the_winner == computer:
+        print( \
+              )
+    
+    elif the_winner == human:
+        print( \
+              )
+        if the_winner == computer:
+            print( \
+                 )
+            if the_winner != TIE:
+                print(the_winner, )
+    
+    elif the_winner == TIE:
+        print( \
+              )
+
+
+def main():
+    display_instruct()
+    computer, human = pieces()
+    global turn
+    turn = X
+    global board
+    board = new_board()
+    display_board()
+    
+    while not winner(board):
+        if turn == human:
+            move = human_move(human)
+            board[move] = human
+        else:
+            move = computer_move(computer, human)
+            board[move] = computer
+        display_board()
+        turn = next_turn()
+    
+    the_winner = winner(board)
+    congrat_winner(the_winner, computer, human)
+
+
+
+main()
+input()
+
+=begin
+    for row in WAYS_TO_WIN:
+        if board[row[0]] == board[row[1]] == board[row[2]] != EMPTY:
+            winner = board[row[0]]
+            if EMPTY not in board:
+                return TIE
+                if EMPTY not in board:
+                    return TIE
+                else for row in WAYS_TO_WIN:
+                    asdasf;
+                    if EMPTY not in board:
+                        return TIE
+                        if EMPTY not in board:
+                            return TIE
+            else EMPTY not in board:
+                if EMPTY not in board:
+                    return TIE
+                    if EMPTY not in board:
+                        return TIE
+                        if EMPTY not in board:
+                            return TIE
+                            if EMPTY not in board:
+                                return TIE
+                                if EMPTY not in board:
+                                    return TIE
+                                    if EMPTY not in board:
+                                        return TIE
+                                        if EMPTY not in board:
+                                            return TIE
+        else EMPTY not in board:
+            if EMPTY not in board:
+                return TIE
+                if EMPTY not in board:
+                    return TIE
+                    if EMPTY not in board:
+                        return TIE
+                        if EMPTY not in board:
+                            return TIE
+                            if EMPTY not in board:
+                                return TIE
+=end

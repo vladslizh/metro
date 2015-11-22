@@ -1,0 +1,202 @@
+program Project2;
+
+{$APPTYPE CONSOLE}
+
+uses
+  SysUtils;
+
+type
+  ArrOperator=array[1..54] of string;
+  ArrFunction=array[1..250] of string;
+
+var
+   f: textfile;
+
+   line,word: string;
+
+   OperatorSum,IfSum,numFunctiom,CrrLevelIf,MaxLevelIf:integer;
+   Current: integer;
+
+   comment: boolean;
+
+   MasSumSpace:array [0..250] of integer;
+   MasFunction:ArrFunction;
+   Operator: ArrOperator =
+   ('+','-','~','*','/','%','<<','>>','&','^',
+   '|','**','<','>','<=','>=','==','<>','!=','and',
+   'or','not','assert','break','class','continue','def','del','except','exec',
+   'finally','for','from','global','import','in','is','lambda','pass','print',
+   'raise','return','try','while','pass','//','=','+=','-=','*=',
+   '/=','%=','**=','//=');
+
+ function FindWord(var crr: integer; const str:string): string;
+   begin
+   result:='';
+   while (line[crr]=' ') or (line[crr]='(') or (line[crr]=')') do crr:=crr+1;
+   while (line[crr]<>' ') and (line[crr]<>'(') and (crr<=length(line)) do
+      begin
+      result:=result+line[crr];
+      crr:=crr+1;
+      end;
+   end;
+
+ procedure CreateClearFile();
+   var
+   fIn,fOut: textfile;
+   crr: integer;
+   line:string;
+   quotes,sharp: boolean;
+
+   begin
+   assign(fIn,'Ruby.txt');
+   reset(fIn);
+   assign(fOut,'RubyClear.txt');
+   rewrite(fOut);
+
+   quotes:=false;
+   while not Eof(fIn) do
+     begin
+     readln(fIn,line);
+     crr:=1;
+     sharp:=false;
+     while (crr<=length(line)) do
+         begin
+         if quotes then
+            begin
+              if line[crr]='"' then quotes:=false;
+              delete(line,crr,1);
+              crr:=crr-1;
+              if line='' then break;
+            end;
+         if sharp then
+            begin
+              delete(line,crr,length(line)-crr+1);
+            end;
+         if not (sharp or quotes) then
+            begin
+            if line[crr]='"' then
+              begin
+                delete(line,crr,1);
+                crr:=crr-1;
+                quotes:=true;
+              end;
+            if line[crr]='#' then
+              begin
+                crr:=crr-1;
+                sharp:=true;
+              end;
+            end;
+         crr:=crr+1;
+         end;
+     writeln(fOut,line);
+     end;
+   close(fOut);
+   close(fIn);
+   end;
+
+
+ function FindIf(str:string):boolean;
+  begin
+    if (str='if')  or (str='else') or (str='elsif')  then result:=true
+                                                     else result:=false;
+  end;
+
+
+  function FindOperator(str:string; Operator: arrOperator; MassFunction: arrFunction; n:integer):boolean;
+  var
+  i: integer;
+   begin
+     result:=false;
+     for i:=1 to 54 do
+      if word=Operator[i] then
+        begin
+          result:=true;
+          break;
+        end;
+
+     for i:=1 to n do
+      if word=MassFunction[i] then
+        begin
+          result:=true;
+          break;
+        end;
+   end;
+
+  procedure includeInMasFunction(str: string;var Num: integer; var MassFunction:arrFunction);
+    begin
+    Num:=Num+1;
+    MassFunction[Num]:=str;
+    end;
+
+  function SpaceToFirst(str:string):integer;
+  var
+  i: integer;
+  begin
+    i:=1;
+    while str[i]=' ' do i:=i+1;
+    result:=i;
+  end;
+
+begin
+
+   CreateClearFile();
+
+   assign(f,'RubyClear.txt');
+   reset(f);
+
+   numFunctiom:=0;
+   OperatorSum := 0;
+   IfSum := 0;
+   MaxlevelIf:=0;
+   CrrLevelIf:=1;
+   comment:=false;
+
+   while not Eof(F) do
+     begin
+     readln(f,line);
+     Current:=1;
+     while Current <= Length(line) do
+       begin
+          word:=FindWord(current,line);
+          if word='=begin' then comment:=true;
+          if word='=end' then comment:=false;
+          if word<>'' then
+            if (SpaceToFirst(line)<MasSumSpace[1]) then
+              while crrlevelIf>1 do
+                begin
+                crrlevelIf:=crrlevelIf-1;
+                MasSumSpace[crrlevelIf]:=0;
+                end;
+          if not comment then
+              if FindIf(word) then
+                begin
+                IfSum:=IfSum+1;
+                if (SpaceToFirst(line)>MasSumSpace[crrlevelIf-1]) then
+                  begin
+                  MasSumSpace[crrlevelIf]:=SpaceToFirst(line);
+                  if  crrlevelIf>MaxlevelIf then MaxlevelIf:=crrlevelIf;
+                  crrlevelIf:=crrlevelIf+1;
+
+                  end
+                else
+                  begin
+                    while SpaceToFirst(line)<=MasSumSpace[crrlevelIf] do crrlevelIf:=crrlevelIf-1;
+                    MasSumSpace[crrlevelIf]:=SpaceToFirst(line);
+                  end;
+                end
+              else if FindOperator(word,Operator,MasFunction,numFunctiom) then OperatorSum:=OperatorSum+1;
+              if word='def' then
+                begin
+                  word:=FindWord(current,line);
+                  includeInMasFunction(word,numFunctiom,MasFunction)
+                end
+       end;
+     end;
+   close(f);
+   OperatorSum:=OperatorSum+IfSum;
+   writeln('Sum IF=',IfSum);
+   writeln('Sum Operator=',OperatorSum);
+   writeln('Max level IF=',MaxlevelIf);
+   writeln('IF/Operator=',IfSum/OperatorSum:0:3);
+   readln;
+end.
